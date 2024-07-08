@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 public class Actors {
-    public static final String API_KEY = "uSxIS8dI89aRXW3tKAuaYA==QlJOYpqUJbdVWCw9";   // TODO --> add your api key about Actors here
+    public static final String API_KEY = "ct2ska4RLBjLExVsAyHgTemwqNXEkPEzTUgJ5b7V";   // TODO --> add your api key about Actors here
     String netWorth;
     Boolean isAlive;
 
@@ -25,7 +25,7 @@ public class Actors {
     public String getActorData(String name) {
         try {
             URL url = new URL("https://api.api-ninjas.com/v1/celebrity?name="+
-                    name.replace(" ", "+")+"&apikey="+API_KEY);
+                    name.replace(" ", "+"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("X-Api-Key", API_KEY);
             System.out.println(connection);
@@ -39,7 +39,7 @@ public class Actors {
                 }
 
                 in.close();
-                return response.toString();
+                return response.substring(1,response.toString().length() - 1);
             } else {
                 return "Error: " + connection.getResponseCode() + " " + connection.getResponseMessage();
             }
@@ -50,37 +50,30 @@ public class Actors {
     }
     public double getNetWorthViaApi(String actorsInfoJson) {
         //TODO --> (This function must return the "NetWorth")
-        JSONObject jsonObject = new JSONObject(actorsInfoJson);
-        JSONArray results = jsonObject.getJSONArray("results");
-        if (!results.isEmpty()) {
-            JSONObject actorData = results.getJSONObject(0);
-            String netWorthString = actorData.optString("net_worth").replace("$", "").replace(",", "");
-            return Double.parseDouble(netWorthString);
-        }
-        return 0.0;
+        JSONObject actorJson = new JSONObject(actorsInfoJson);
+        String net = actorJson.get("net_worth").toString();
+        return Double.parseDouble(net);
+//        JSONObject jsonObject = new JSONObject(actorsInfoJson);
+//        JSONArray results = jsonObject.getJSONArray("results");
+//        if (!results.isEmpty()) {
+//            JSONObject actorData = results.getJSONObject(0);
+//            String netWorthString = actorData.optString("net_worth").replace("$", "").replace(",", "");
+//            return Double.parseDouble(netWorthString);
+//        }
+//        return 0.0;
     }
 
     public boolean isAlive(String actorsInfoJson) {
         //TODO --> (If your chosen actor is alive it must return true otherwise it must return false)
-        JSONObject jsonObject = new JSONObject(actorsInfoJson);
-        JSONArray results = jsonObject.getJSONArray("results");
-        if (!results.isEmpty()) {
-            JSONObject actorData = results.getJSONObject(0);
-            String status = actorData.optString("is_alive");
-            return "true".equalsIgnoreCase(status);
-        }
-        return false;
+        JSONObject actorJson = new JSONObject(actorsInfoJson);
+        String result = actorJson.get("is_alive").toString();
+        return Boolean.parseBoolean(result);
     }
 
     public String getDateOfDeathViaApi(String actorsInfoJson) {
         //TODO --> (If your chosen actor is deceased it must return the date of death)  -->
-        JSONObject jsonObject = new JSONObject(actorsInfoJson);
-        JSONArray results = jsonObject.getJSONArray("results");
-        if (!results.isEmpty()) {
-            JSONObject actorData = results.getJSONObject(0);
-            return actorData.optString("date_of_death", "N/A");
-        }
-        return "N/A";
+        JSONObject actorJson = new JSONObject(actorsInfoJson);
+        return actorJson.optString("date_of_death", "N/A");
     }
 
 }
